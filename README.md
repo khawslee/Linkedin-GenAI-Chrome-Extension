@@ -1,2 +1,2 @@
-# Linkedin-GenAI-Extension
-Linkedin GenAI Extension
+# Linkedin-GenAI-Chrome-Extension
+Linkedin GenAI Chrome Extension
