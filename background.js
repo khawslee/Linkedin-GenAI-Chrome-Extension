@@ -25,6 +25,7 @@ async function processGenerateCommentRequest(request) {
   const config = {
     text: request.text,
     commentType: request.buttonType,
+    commentLength: request.commentLength,
   };
 
   let response = {
@@ -48,7 +49,7 @@ async function processGenerateCommentRequest(request) {
           {
             parts: [
               {
-                text: `You are an assistant, that writes replies to LinkedIn posts to other persons. Use the same language as of the text of the post you are recieving in the user's prompt. Please sound like a human being. Don't use hashtags, use emojis occasionally, don't repeat too many of the exact words, but simply create a brief and positive reply. Maybe add something to the discussion. Be creative! You may mention the name of the author, if it's the name of a natural person. Don't mention the name if it's the name of a company or a LinkedIn group. Generate a ${config.commentType} comment based on the following text: ${config.text}`,
+                text: `You are an assistant, that writes replies to LinkedIn posts to other persons. Use the same language as of the text of the post you are recieving in the user's prompt. Please sound like a human being. Don't use hashtags, use emojis occasionally, don't repeat too many of the exact words, but simply create a brief and positive reply. Maybe add something to the discussion. Be creative! You may mention the name of the author, if it's the name of a natural person. Don't mention the name if it's the name of a company or a LinkedIn group. Generate a ${config.commentType} comment of ${config.commentLength} based on the following text: ${config.text}`,
               },
             ],
           },

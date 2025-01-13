@@ -1,4 +1,5 @@
 let loading = false;
+let commentLength = "shorter";
 
 document.addEventListener("focusin", function (event) {
   if (event.target.classList.contains("ql-editor")) {
@@ -8,51 +9,76 @@ document.addEventListener("focusin", function (event) {
       // add appended class to add buttons only on the first event trigger
       parentForm.classList.add("buttons-appended");
 
-      // create and append engage button
-      let engageBtn = document.createElement("button");
-      engageBtn.classList.add("rounded-button");
-      engageBtn.classList.add("first-rounded-button");
-      engageBtn.innerText = "🤝 Engage";
+      const buttons = {
+        Engage: { emoji: "🤝", text: "Engage" },
+        Question: { emoji: "❓", text: "Question" },
+        Humorous: { emoji: "😂", text: "Humorous" },
+        Inspirational: { emoji: "🌟", text: "Inspirational" },
+        Informative: { emoji: "📚", text: "Informative" },
+        Casual: { emoji: "👋", text: "Casual" },
+        Witty: { emoji: "🙃", text: "Witty" },
+        Enthusiastic: { emoji: "🎉", text: "Enthusiastic" },
+        Empathetic: { emoji: "💖", text: "Empathetic" },
+        Celebrating: { emoji: "🥳", text: "Celebrating" },
+        Answer: { emoji: "✅", text: "Answer" },
+      };
 
-      parentForm.appendChild(engageBtn);
-
-      engageBtn.addEventListener("click", function (event) {
-        processButtonClicked(event, "engage", parentForm);
+      Object.keys(buttons).forEach((key, index) => {
+        let btn = document.createElement("button");
+        btn.classList.add("rounded-button");
+        btn.innerText = `${buttons[key].emoji} ${buttons[key].text}`;
+        parentForm.appendChild(btn);
+        btn.addEventListener("click", function (event) {
+          processButtonClicked(event, key, parentForm);
+        });
       });
 
-      // create and append emotional button
-      let questionBtn = document.createElement("button");
-      questionBtn.classList.add("rounded-button");
-      questionBtn.innerText = "❓Question";
-      parentForm.appendChild(questionBtn);
-
-      questionBtn.addEventListener("click", function (event) {
-        processButtonClicked(event, "question", parentForm);
-      });
-
-      const textBox = document.createElement("input");
-      textBox.type = "text";
-      textBox.placeholder = "Enter your question";
-
-      const sendButton = document.createElement("button");
-      sendButton.innerText = "Send";
-      sendButton.classList.add("rounded-button");
-      sendButton.addEventListener("click", () => {
-        const questionText = textBox.value;
-        console.log("Sending question:", questionText);
-      });
-
-      const container = document.createElement("div");
-      container.style.display = "inline-flex";
-      container.appendChild(textBox);
-      container.appendChild(sendButton);
-
-      parentForm.appendChild(container);
-
+      // add author
       const authorSpan = document.createElement("span");
-      authorSpan.innerText = " By - khawslee";
+      authorSpan.innerText = "© khawslee";
       authorSpan.style.fontSize = "0.6em";
-      questionBtn.parentNode.insertBefore(authorSpan, questionBtn.nextSibling);
+      parentForm.appendChild(authorSpan);
+
+      // add comment length options
+      const commentLengthDiv = document.createElement("div");
+      commentLengthDiv.classList.add("comment-length-div");
+
+      const shorterRadio = document.createElement("input");
+      shorterRadio.type = "radio";
+      shorterRadio.id = "shorterComment";
+      shorterRadio.name = "commentLength";
+      shorterRadio.value = "shorter";
+      shorterRadio.checked = true; // default to shorter
+      shorterRadio.addEventListener("click", function () {
+        commentLength = "1 sentence";
+      });
+
+      const shorterLabel = document.createElement("label");
+      shorterLabel.htmlFor = "shorterComment";
+      shorterLabel.innerText = "Shorter";
+      shorterLabel.style.marginLeft = "5px";
+      shorterLabel.style.marginRight = "10px";
+
+      const longerRadio = document.createElement("input");
+      longerRadio.type = "radio";
+      longerRadio.id = "longerComment";
+      longerRadio.name = "commentLength";
+      longerRadio.value = "longer";
+      longerRadio.addEventListener("click", function () {
+        commentLength = "at least 3 sentences";
+      });
+
+      const longerLabel = document.createElement("label");
+      longerLabel.htmlFor = "longerComment";
+      longerLabel.innerText = "Longer";
+      longerLabel.style.marginLeft = "5px";
+
+      commentLengthDiv.appendChild(shorterRadio);
+      commentLengthDiv.appendChild(shorterLabel);
+      commentLengthDiv.appendChild(longerRadio);
+      commentLengthDiv.appendChild(longerLabel);
+
+      parentForm.appendChild(commentLengthDiv);
     } else {
       console.log(
         "No parent with the class 'comments-comment-texteditor' found for the focused element."
@@ -115,6 +141,7 @@ function processButtonClicked(event, buttonType, parentForm) {
     event: event,
     parentForm: parentForm,
     text: textWithoutSeeMore,
+    commentLength: commentLength,
   });
 }
 
@@ -169,16 +196,11 @@ const style = document.createElement("style");
 style.textContent = `
 .rounded-button {
     border-width: 1px;
-    /*border-color: #000000;*/
     border-color: rgba(0, 0, 0, 0.3);
     border-style: solid;
-    margin: 10px 3px 10px 3px;
+    margin: 3px 3px 3px 3px;
     padding: 5px 10px 5px 10px;
     border-radius: 20px;
-}
-
-.first-rounded-button {
-    margin-left: 10px;
 }
 
 .loading-animation {
@@ -207,6 +229,13 @@ style.textContent = `
 .disabled {
     opacity: 0.8;
     pointer-events: none;
+}
+
+.comment-length-div {
+    padding: 5px;
+    margin: -5px 3px 5px 3px;
+    display: flex;
+    align-items: center;
 }
 `;
 document.head.appendChild(style);
