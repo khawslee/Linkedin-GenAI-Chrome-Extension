@@ -21,64 +21,74 @@ document.addEventListener("focusin", function (event) {
         Empathetic: { emoji: "💖", text: "Empathetic" },
         Celebrating: { emoji: "🥳", text: "Celebrating" },
         Answer: { emoji: "✅", text: "Answer" },
+        Convincing: { emoji: "💬", text: "Convincing" },
+        Teasing: { emoji: "😛", text: "Teasing" },
       };
 
-      Object.keys(buttons).forEach((key, index) => {
-        let btn = document.createElement("button");
-        btn.classList.add("rounded-button");
-        btn.innerText = `${buttons[key].emoji} ${buttons[key].text}`;
-        parentForm.appendChild(btn);
-        btn.addEventListener("click", function (event) {
-          processButtonClicked(event, key, parentForm);
-        });
-      });
+      const select = document.createElement("select");
+      select.classList.add("rounded-select");
+      select.classList.add("flex2Div");
+      const defaultOption = document.createElement("option");
+      defaultOption.text = "Select an option";
+      defaultOption.value = "";
+      select.appendChild(defaultOption);
 
-      // add author
-      const authorSpan = document.createElement("span");
-      authorSpan.innerText = "© khawslee";
-      authorSpan.style.fontSize = "0.6em";
-      parentForm.appendChild(authorSpan);
+      Object.keys(buttons).forEach((key, index) => {
+        let option = document.createElement("option");
+        option.value = key;
+        option.text = `${buttons[key].emoji} ${buttons[key].text}`;
+        select.appendChild(option);
+      });
+      const containerDiv = document.createElement("div");
+      containerDiv.classList.add("select-author-container");
+
+      containerDiv.appendChild(select);
 
       // add comment length options
       const commentLengthDiv = document.createElement("div");
       commentLengthDiv.classList.add("comment-length-div");
 
-      const shorterRadio = document.createElement("input");
-      shorterRadio.type = "radio";
-      shorterRadio.id = "shorterComment";
-      shorterRadio.name = "commentLength";
-      shorterRadio.value = "shorter";
-      shorterRadio.checked = true; // default to shorter
-      shorterRadio.addEventListener("click", function () {
-        commentLength = "1 sentence";
+      const lengthSelect = document.createElement("select");
+      lengthSelect.classList.add("rounded-select");
+      const shorterOption = document.createElement("option");
+      shorterOption.value = "shorter";
+      shorterOption.text = "Shorter";
+      const longerOption = document.createElement("option");
+      longerOption.value = "longer";
+      longerOption.text = "Longer";
+      lengthSelect.appendChild(shorterOption);
+      lengthSelect.appendChild(longerOption);
+      lengthSelect.value = "shorter"; // default to shorter
+      commentLengthDiv.appendChild(lengthSelect);
+      containerDiv.appendChild(commentLengthDiv);
+
+      lengthSelect.addEventListener("change", function (event) {
+        if (event.target.value === "shorter") {
+          commentLength = "concise and straight to the point";
+        } else {
+          commentLength = "detailed and engaging";
+        }
       });
 
-      const shorterLabel = document.createElement("label");
-      shorterLabel.htmlFor = "shorterComment";
-      shorterLabel.innerText = "Shorter";
-      shorterLabel.style.marginLeft = "5px";
-      shorterLabel.style.marginRight = "10px";
+      const submitButton = document.createElement("button");
+      submitButton.innerText = "Submit";
+      submitButton.classList.add("rounded-button");
+      containerDiv.appendChild(submitButton);
 
-      const longerRadio = document.createElement("input");
-      longerRadio.type = "radio";
-      longerRadio.id = "longerComment";
-      longerRadio.name = "commentLength";
-      longerRadio.value = "longer";
-      longerRadio.addEventListener("click", function () {
-        commentLength = "at least 3 sentences";
+      submitButton.addEventListener("click", function (event) {
+        const selectElement = parentForm.querySelector(".rounded-select");
+        const buttonType = selectElement.value;
+        processButtonClicked(event, buttonType, parentForm);
       });
 
-      const longerLabel = document.createElement("label");
-      longerLabel.htmlFor = "longerComment";
-      longerLabel.innerText = "Longer";
-      longerLabel.style.marginLeft = "5px";
+      // add author
+      const authorSpan = document.createElement("span");
+      authorSpan.classList.add("flex1Div");
+      authorSpan.innerText = "© khawslee";
+      authorSpan.style.fontSize = "0.6em";
+      containerDiv.appendChild(authorSpan);
 
-      commentLengthDiv.appendChild(shorterRadio);
-      commentLengthDiv.appendChild(shorterLabel);
-      commentLengthDiv.appendChild(longerRadio);
-      commentLengthDiv.appendChild(longerLabel);
-
-      parentForm.appendChild(commentLengthDiv);
+      parentForm.appendChild(containerDiv);
     } else {
       console.log(
         "No parent with the class 'comments-comment-texteditor' found for the focused element."
@@ -196,7 +206,7 @@ const style = document.createElement("style");
 style.textContent = `
 .rounded-button {
     border-width: 1px;
-    border-color: rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 0, 0, 0.7);
     border-style: solid;
     margin: 3px 3px 3px 3px;
     padding: 5px 10px 5px 10px;
@@ -232,10 +242,35 @@ style.textContent = `
 }
 
 .comment-length-div {
-    padding: 5px;
-    margin: -5px 3px 5px 3px;
     display: flex;
     align-items: center;
+    width: fit-content;
+}
+
+.rounded-select {
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.7);
+    border-style: solid;
+    margin: 3px 3px 3px 3px;
+    padding: 5px 10px 5px 10px;
+    border-radius: 20px;
+    padding-right: 40px;
+}
+
+.select-author-container {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin: 5px;
+}
+
+.flex2Div {
+    flex: 2; /* Make select wider */
+}
+
+.flex1Div {
+    flex: 1; /* Make author span take remaining space */
+    text-align: left;
 }
 `;
 document.head.appendChild(style);
